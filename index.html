@@ -3,266 +3,1074 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>What to the Slave Is the Fourth of July? — Frederick Douglass · July 4, 2026</title>
-<meta name="description" content="An immersive experience based on Frederick Douglass's 1852 speech. Launching July 4, 2026 — 250 years after the Declaration of Independence. A Radical Imagination project.">
-<meta property="og:title" content="What to the Slave Is the Fourth of July? — Frederick Douglass · July 4, 2026">
-<meta property="og:description" content="An immersive experience based on Frederick Douglass's 1852 speech. Launching July 4, 2026 — 250 years after the Declaration of Independence.">
-<meta property="og:image" content="/assets/poster-douglass.jpg">
+<title>What to the Slave Is the Fourth of July? — Frederick Douglass, 1852</title>
+<meta name="description" content="An immersive VR experience of Frederick Douglass's most important speech. Launching July 4, 2026 — the 250th anniversary of the Declaration of Independence.">
+<meta property="og:title" content="What to the Slave Is the Fourth of July?">
+<meta property="og:description" content="An immersive VR experience of Frederick Douglass's 1852 speech. 44 archival images from the Library of Congress. Launching July 4, 2026.">
 <meta property="og:type" content="website">
-<link rel="icon" type="image/png" href="/assets/ri-logo.png">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,500&family=Oswald:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --bg: #000;
-    --cream: #e8d9a8;
-    --crimson: #dc143c;
-    --crimson-deep: #8B0A1D;
-    --gold: #ffd700;
-    --muted: #555;
-    --muted-strong: #888;
-    --line: #1a1a1a;
+@font-face { font-family: 'VTC Du Bois'; src: url('/fonts/VTCDuBois-Bold.otf') format('opentype'); font-weight: 700; }
+@font-face { font-family: 'VTC Du Bois'; src: url('/fonts/VTCDuBois-Regular.otf') format('opentype'); font-weight: 400; }
+
+:root {
+  --gold: #c8a96e;
+  --gold-bright: #CFB53B;
+  --gold-dim: rgba(200,169,110,0.15);
+  --black: #000;
+  --deep: #050505;
+  --text: #f5e6c8;
+  --muted: #888;
+  --dim: #444;
+  --fire-1: #FFF;
+  --fire-2: #FFD700;
+  --fire-3: #FF6600;
+  --fire-4: #FF2200;
+  --fire-5: #991100;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'Inter', -apple-system, sans-serif;
+  background: var(--black);
+  color: var(--text);
+  overflow-x: hidden;
+}
+h1, h2, h3 { font-family: 'VTC Du Bois', Georgia, serif; }
+
+/* ========== SECTION 1: THE THRESHOLD ========== */
+.threshold {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Gold particle dust */
+.particles {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+}
+.particle {
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  background: var(--gold);
+  border-radius: 50%;
+  opacity: 0;
+  animation: float-up linear infinite;
+}
+@keyframes float-up {
+  0% { opacity: 0; transform: translateY(0) translateX(0); }
+  10% { opacity: 0.8; }
+  90% { opacity: 0.2; }
+  100% { opacity: 0; transform: translateY(-100vh) translateX(var(--drift)); }
+}
+
+/* Douglass face reveal */
+.face-container {
+  position: relative;
+  z-index: 2;
+  width: clamp(200px, 40vw, 360px);
+  height: clamp(260px, 52vw, 468px);
+  opacity: 0;
+  transition: none;
+}
+.face-container img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: brightness(0);
+  transition: none;
+}
+.face-container.revealing img {
+  animation: face-emerge 4s ease-out forwards;
+}
+@keyframes face-emerge {
+  0% { filter: brightness(0); }
+  20% { filter: brightness(0.05) contrast(1.4); }
+  50% { filter: brightness(0.4) contrast(1.2); }
+  100% { filter: brightness(1) contrast(1); }
+}
+.face-container.revealing {
+  opacity: 1;
+  animation: face-fade-in 4s ease-out forwards;
+}
+@keyframes face-fade-in {
+  0% { opacity: 0; }
+  15% { opacity: 0.1; }
+  50% { opacity: 0.6; }
+  100% { opacity: 1; }
+}
+
+/* Radial mask — eyes emerge first (center brightest) */
+.face-container::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 60% 40% at 50% 38%, transparent 0%, rgba(0,0,0,0.95) 100%);
+  pointer-events: none;
+  opacity: 1;
+  transition: opacity 3s ease-out 2s;
+}
+.face-container.revealing::after {
+  opacity: 0;
+}
+
+.threshold-text {
+  position: relative;
+  z-index: 2;
+  margin-top: 40px;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 1.5s ease 5s, transform 1.5s ease 5s;
+}
+.threshold-text.visible {
+  opacity: 1;
+  transform: none;
+}
+.threshold-name {
+  font-family: 'VTC Du Bois', Georgia, serif;
+  font-size: clamp(24px, 5vw, 48px);
+  color: var(--gold);
+  letter-spacing: 2px;
+  margin-bottom: 12px;
+}
+.threshold-date {
+  font-size: clamp(11px, 1.8vw, 14px);
+  letter-spacing: 6px;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 6px;
+}
+.threshold-place {
+  font-size: clamp(11px, 1.8vw, 13px);
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: var(--dim);
+}
+
+/* ========== SECTION 2: THE QUESTION ========== */
+.question {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 80px 20px;
+  position: relative;
+  overflow: hidden;
+}
+.question-bg {
+  position: absolute;
+  inset: 0;
+  background: url('/images/archive/corinthian-hall-1851.jpg') center/cover no-repeat;
+  opacity: 0;
+  transition: opacity 2s ease;
+  filter: sepia(0.4) brightness(0.15);
+}
+.question-bg.visible { opacity: 1; }
+.question-line {
+  position: relative;
+  z-index: 2;
+  font-family: 'VTC Du Bois', Georgia, serif;
+  font-size: clamp(20px, 4vw, 36px);
+  color: var(--text);
+  max-width: 700px;
+  line-height: 1.5;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 1.2s ease, transform 1.2s ease;
+}
+.question-line.visible {
+  opacity: 1;
+  transform: none;
+}
+.question-line.gold { color: var(--gold); }
+.question-beat { height: 60px; }
+
+/* ========== SECTION 3: THE SPEECH ========== */
+.speech {
+  max-width: 750px;
+  margin: 0 auto;
+  padding: 120px 20px;
+  text-align: center;
+}
+.speech-quote {
+  font-family: 'VTC Du Bois', Georgia, serif;
+  font-size: clamp(18px, 3.2vw, 28px);
+  color: var(--gold);
+  line-height: 1.7;
+  font-style: italic;
+  text-align: left;
+  border-left: 3px solid var(--gold-bright);
+  padding-left: 24px;
+  margin-bottom: 60px;
+  min-height: 2em;
+}
+.speech-quote .cursor-char {
+  opacity: 0;
+  transition: opacity 0.05s;
+}
+.speech-quote .cursor-char.typed { opacity: 1; }
+
+/* Fire text */
+.fire-text {
+  font-family: 'VTC Du Bois', Georgia, serif;
+  font-weight: 700;
+  letter-spacing: 6px;
+  text-transform: uppercase;
+  background: linear-gradient(180deg, var(--fire-1) 0%, var(--fire-2) 25%, var(--fire-3) 60%, var(--fire-4) 85%, var(--fire-5) 100%);
+  background-size: 100% 200%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: fire-shift 3s ease-in-out infinite alternate;
+  margin: 60px 0;
+  opacity: 0;
+  transform: scale(0.9);
+  transition: opacity 0.8s ease, transform 0.8s ease;
+}
+.fire-text.visible {
+  opacity: 1;
+  transform: scale(1);
+}
+.fire-text-sm {
+  font-size: clamp(32px, 7vw, 64px);
+  text-shadow: 0 0 40px rgba(255,68,0,0.3), 0 0 80px rgba(255,68,0,0.15);
+}
+.fire-text-lg {
+  font-size: clamp(48px, 12vw, 120px);
+  text-shadow: 0 0 60px rgba(255,68,0,0.4), 0 0 120px rgba(255,68,0,0.2);
+}
+@keyframes fire-shift {
+  0% { background-position: 0% 0%; filter: brightness(1); }
+  50% { filter: brightness(1.2); }
+  100% { background-position: 0% 100%; filter: brightness(0.9); }
+}
+/* Glow pulse for fire text */
+.fire-text::after {
+  content: attr(data-text);
+  position: absolute;
+  inset: 0;
+  background: inherit;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  filter: blur(12px);
+  opacity: 0.4;
+  animation: glow-pulse 2s ease-in-out infinite alternate;
+  z-index: -1;
+}
+@keyframes glow-pulse {
+  0% { opacity: 0.2; }
+  100% { opacity: 0.5; }
+}
+
+/* ========== SECTION 4: THE DOCUMENTS ========== */
+.documents {
+  padding: 120px 20px;
+  position: relative;
+  overflow: hidden;
+}
+.doc-row {
+  max-width: 1000px;
+  margin: 0 auto 120px;
+  position: relative;
+  min-height: 60vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.doc-image-wrap {
+  position: relative;
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 1.5s ease, transform 1.5s ease;
+}
+.doc-image-wrap.visible {
+  opacity: 1;
+  transform: none;
+}
+.doc-image-wrap img {
+  max-width: min(90vw, 900px);
+  max-height: 80vh;
+  object-fit: contain;
+  display: block;
+}
+
+/* Declaration burning effect */
+.burn-overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(ellipse at center, transparent 30%, rgba(0,0,0,0) 30%);
+  transition: background 0.1s;
+}
+.burn-overlay.burning {
+  animation: burn-creep 3s ease-in forwards;
+}
+@keyframes burn-creep {
+  0% {
+    background: radial-gradient(ellipse at center, transparent 80%, rgba(255,68,0,0) 80%);
+    box-shadow: none;
   }
-
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-
-  html, body {
-    background: var(--bg);
-    color: var(--cream);
-    font-family: 'Cormorant Garamond', Georgia, serif;
-    -webkit-font-smoothing: antialiased;
-    min-height: 100vh;
-    overflow-x: hidden;
+  30% {
+    background: radial-gradient(ellipse at center, transparent 60%, rgba(255,68,0,0.1) 70%, rgba(153,17,0,0.2) 85%, rgba(0,0,0,0.6) 100%);
+    box-shadow: inset 0 0 30px rgba(255,68,0,0.1);
   }
-
-  a { color: inherit; text-decoration: none; }
-
-  /* ============ LAYOUT ============ */
-  .invite {
-    min-height: 100vh;
-    display: grid;
-    grid-template-rows: auto 1fr auto;
-    max-width: 980px;
-    margin: 0 auto;
-    padding: 40px 32px 56px;
-    position: relative;
+  60% {
+    background: radial-gradient(ellipse at center, transparent 40%, rgba(255,102,0,0.15) 55%, rgba(255,34,0,0.3) 70%, rgba(0,0,0,0.8) 100%);
+    box-shadow: inset 0 0 60px rgba(255,68,0,0.2);
   }
-
-  /* ============ HEADER ============ */
-  header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 48px;
+  100% {
+    background: radial-gradient(ellipse at center, transparent 15%, rgba(255,102,0,0.2) 35%, rgba(255,34,0,0.4) 55%, rgba(153,17,0,0.6) 75%, rgba(0,0,0,0.95) 100%);
+    box-shadow: inset 0 0 100px rgba(255,68,0,0.3), inset 0 0 200px rgba(153,17,0,0.2);
   }
+}
 
-  .back-link {
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 11px;
-    letter-spacing: 3px;
-    text-transform: uppercase;
-    color: var(--muted-strong);
-    transition: color 140ms ease;
-  }
-  .back-link:hover { color: var(--gold); }
+/* Slave Market broadside */
+.doc-caption {
+  position: absolute;
+  bottom: -40px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: clamp(10px, 1.5vw, 12px);
+  color: var(--dim);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  white-space: nowrap;
+  text-align: center;
+}
 
-  .date-tag {
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 11px;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    color: var(--crimson);
-    padding: 6px 14px;
-    border: 1px solid var(--crimson);
-    border-radius: 2px;
-  }
+/* Newspaper physical object */
+.newspaper-wrap {
+  position: relative;
+  transform: rotate(-3deg);
+  transition: transform 0.5s ease, box-shadow 0.5s ease;
+  box-shadow: 8px 12px 40px rgba(0,0,0,0.8), 2px 4px 12px rgba(0,0,0,0.6);
+  cursor: pointer;
+}
+.newspaper-wrap:hover {
+  transform: rotate(0deg) scale(1.05);
+  box-shadow: 12px 18px 60px rgba(0,0,0,0.9), 0 0 30px rgba(200,169,110,0.1);
+}
+.newspaper-wrap img {
+  display: block;
+}
 
-  /* ============ HERO ============ */
-  .hero {
-    display: grid;
-    grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
-    gap: 56px;
-    align-items: center;
-  }
+/* Pamphlet */
+.pamphlet-wrap {
+  transform: rotate(2deg);
+  box-shadow: 6px 10px 30px rgba(0,0,0,0.7);
+  transition: transform 0.4s ease;
+}
+.pamphlet-wrap:hover {
+  transform: rotate(0deg) scale(1.03);
+}
 
-  @media (max-width: 820px) {
-    .hero {
-      grid-template-columns: 1fr;
-      gap: 32px;
-    }
-  }
+/* Parallax containers */
+.parallax-slow { will-change: transform; }
+.parallax-fast { will-change: transform; }
 
-  .poster {
-    width: 100%;
-    max-width: 420px;
-    aspect-ratio: 3 / 4;
-    object-fit: cover;
-    border: 1px solid var(--line);
-    box-shadow: 0 40px 120px rgba(220, 20, 60, 0.12), 0 0 0 1px rgba(255, 215, 0, 0.05);
-  }
+/* ========== SECTION 5: THE NUMBERS ========== */
+.numbers {
+  padding: 120px 20px;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+.numbers-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 60px 40px;
+}
+.number-card {
+  text-align: center;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.8s ease, transform 0.8s ease;
+}
+.number-card.visible {
+  opacity: 1;
+  transform: none;
+}
+.number-big {
+  font-family: 'VTC Du Bois', Georgia, serif;
+  font-size: clamp(42px, 8vw, 72px);
+  font-weight: 700;
+  color: var(--gold-bright);
+  line-height: 1;
+}
+.number-label {
+  font-size: clamp(13px, 2vw, 16px);
+  color: var(--muted);
+  margin-top: 8px;
+  line-height: 1.5;
+}
+.number-source {
+  font-size: 10px;
+  color: var(--dim);
+  margin-top: 4px;
+  font-style: italic;
+}
 
-  @media (max-width: 820px) {
-    .poster { max-width: 320px; margin: 0 auto; }
-  }
+/* Aging sequence */
+.aging-sequence {
+  margin-top: 30px;
+  position: relative;
+  height: clamp(200px, 40vw, 400px);
+  width: clamp(160px, 32vw, 320px);
+  margin-left: auto;
+  margin-right: auto;
+  overflow: hidden;
+}
+.aging-portrait {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 1.5s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.aging-portrait.active { opacity: 1; }
+.aging-portrait img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  animation: ken-burns 12s ease-in-out infinite alternate;
+}
+@keyframes ken-burns {
+  0% { transform: scale(1); }
+  100% { transform: scale(1.08); }
+}
+.aging-year {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 11px;
+  letter-spacing: 3px;
+  color: var(--dim);
+  text-transform: uppercase;
+}
 
-  .invocation {
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 10.5px;
-    letter-spacing: 3px;
-    text-transform: uppercase;
-    color: var(--gold);
-    margin-bottom: 20px;
-  }
+/* ========== SECTION 6: THE COUNT ========== */
+.count {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 80px 20px;
+}
+.count-dates {
+  font-size: clamp(14px, 2.5vw, 18px);
+  color: var(--muted);
+  letter-spacing: 3px;
+  margin-bottom: 20px;
+  opacity: 0;
+  transition: opacity 1s ease;
+}
+.count-dates.visible { opacity: 1; }
+.count-number {
+  font-family: 'VTC Du Bois', Georgia, serif;
+  font-size: clamp(64px, 15vw, 160px);
+  font-weight: 700;
+  color: var(--gold-bright);
+  margin-bottom: 24px;
+  line-height: 1;
+}
+.count-line {
+  font-size: clamp(16px, 3vw, 24px);
+  color: var(--text);
+  font-style: italic;
+  opacity: 0;
+  transition: opacity 1.5s ease 0.5s;
+}
+.count-line.visible { opacity: 1; }
 
-  h1 {
-    font-family: 'Oswald', sans-serif;
-    font-weight: 700;
-    font-size: clamp(32px, 5.2vw, 62px);
-    letter-spacing: 0.01em;
-    text-transform: uppercase;
-    color: var(--cream);
-    line-height: 1.02;
-    margin-bottom: 24px;
-  }
+/* ========== SECTION 7: ENTER ========== */
+.enter {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 80px 20px;
+}
+.enter-title {
+  font-family: 'VTC Du Bois', Georgia, serif;
+  font-size: clamp(24px, 5vw, 42px);
+  color: var(--text);
+  margin-bottom: 40px;
+  letter-spacing: 2px;
+}
+.enter-btn {
+  display: inline-block;
+  padding: 20px 60px;
+  background: var(--gold-bright);
+  color: var(--black);
+  text-decoration: none;
+  font-family: 'VTC Du Bois', Georgia, serif;
+  font-weight: 700;
+  font-size: clamp(18px, 3vw, 24px);
+  letter-spacing: 6px;
+  text-transform: uppercase;
+  border: none;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.enter-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 40px rgba(207,181,59,0.3), 0 0 80px rgba(207,181,59,0.1);
+}
+.enter-btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+  transform: translateX(-100%);
+  transition: transform 0.6s ease;
+}
+.enter-btn:hover::before {
+  transform: translateX(100%);
+}
+.enter-meta {
+  margin-top: 24px;
+  font-size: clamp(11px, 1.5vw, 13px);
+  color: var(--dim);
+  line-height: 1.8;
+  max-width: 600px;
+}
+.enter-sources {
+  margin-top: 32px;
+  font-size: clamp(10px, 1.3vw, 12px);
+  color: var(--dim);
+  line-height: 1.8;
+  max-width: 600px;
+  font-style: italic;
+}
 
-  h1 em {
-    font-family: 'Cormorant Garamond', serif;
-    font-style: italic;
-    font-weight: 500;
-    text-transform: none;
-    color: var(--crimson);
-    letter-spacing: 0;
-  }
+/* ========== FOOTER ========== */
+.footer {
+  text-align: center;
+  padding: 60px 20px;
+  border-top: 1px solid #111;
+  font-size: 12px;
+  color: var(--dim);
+  line-height: 2;
+}
+.footer a { color: var(--gold); text-decoration: none; }
+.footer .ri-mark {
+  font-family: 'VTC Du Bois', Georgia, serif;
+  color: var(--gold-bright);
+  font-weight: 700;
+  font-size: 14px;
+  letter-spacing: 2px;
+}
+.footer-quote {
+  margin-top: 20px;
+  font-style: italic;
+  color: var(--muted);
+  max-width: 500px;
+  margin-left: auto;
+  margin-right: auto;
+  line-height: 1.7;
+}
 
-  .byline {
-    font-family: 'Cormorant Garamond', serif;
-    font-style: italic;
-    font-size: 18px;
-    color: #aaa;
-    margin-bottom: 28px;
-    line-height: 1.55;
-  }
+/* ========== RESPONSIVE ========== */
+@media (max-width: 600px) {
+  .doc-row { min-height: 40vh; }
+  .doc-image-wrap img { max-width: 95vw; max-height: 70vh; }
+  .numbers-grid { grid-template-columns: repeat(2, 1fr); gap: 40px 20px; }
+  .fire-text-lg { letter-spacing: 3px; }
+  .enter-btn { padding: 16px 40px; letter-spacing: 4px; }
+  .speech-quote { padding-left: 16px; }
+}
 
-  .body {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 17px;
-    line-height: 1.7;
-    color: #cdcdcd;
-    margin-bottom: 32px;
-    max-width: 56ch;
-  }
-
-  .body p { margin-bottom: 14px; }
-  .body strong { color: var(--cream); font-weight: 600; }
-
-  .cta-row {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 12px;
-    margin-top: 12px;
-  }
-
-  .cta {
-    display: inline-block;
-    padding: 14px 28px;
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 11px;
-    letter-spacing: 2.5px;
-    text-transform: uppercase;
-    border-radius: 2px;
-    transition: background 160ms ease, color 160ms ease;
-  }
-
-  .cta.gold { border: 1px solid var(--gold); color: var(--gold); }
-  .cta.gold:hover { background: var(--gold); color: var(--bg); }
-
-  .cta.crimson { border: 1px solid var(--crimson); color: var(--crimson); }
-  .cta.crimson:hover { background: var(--crimson); color: var(--bg); }
-
-  /* ============ FOOTER ============ */
-  footer {
-    margin-top: 60px;
-    padding-top: 28px;
-    border-top: 1px solid var(--line);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 16px;
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 10.5px;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    color: var(--muted-strong);
-  }
-
-  footer a:hover { color: var(--gold); }
-
-  .footer-mark img {
-    width: 32px;
-    height: auto;
-    vertical-align: middle;
-    opacity: 0.8;
-    margin-right: 10px;
-  }
-
-  /* ============ BACKGROUND ATMOSPHERE ============ */
-  .invite::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background:
-      radial-gradient(ellipse at 20% 10%, rgba(220, 20, 60, 0.05) 0%, transparent 50%),
-      radial-gradient(ellipse at 80% 90%, rgba(255, 215, 0, 0.04) 0%, transparent 50%);
-    pointer-events: none;
-    z-index: -1;
-  }
+@media (max-width: 380px) {
+  .numbers-grid { grid-template-columns: 1fr; }
+}
 </style>
 </head>
 <body>
 
-<div class="invite">
+<!-- ========== SECTION 1: THE THRESHOLD ========== -->
+<section class="threshold" id="threshold">
+  <div class="particles" id="particles"></div>
+  <div class="face-container" id="face">
+    <img src="/images/archive/cutouts/douglass-face.png" alt="Frederick Douglass, daguerreotype by Samuel J. Miller, c. 1852" loading="eager">
+  </div>
+  <div class="threshold-text" id="threshold-text">
+    <div class="threshold-name">Frederick Douglass</div>
+    <div class="threshold-date">July 5, 1852</div>
+    <div class="threshold-place">Rochester, New York</div>
+  </div>
+</section>
 
-  <header>
-    <a href="https://radicalimagination.xyz/" class="back-link">← Radical Imagination</a>
-    <span class="date-tag">Launches July 4, 2026</span>
-  </header>
+<!-- ========== SECTION 2: THE QUESTION ========== -->
+<section class="question" id="question">
+  <div class="question-bg" id="question-bg"></div>
+  <div class="question-line" id="q1">Frederick Douglass was invited to speak on July 4th.</div>
+  <div class="question-beat"></div>
+  <div class="question-line gold" id="q2">He chose July 5th.</div>
+</section>
 
-  <section class="hero">
-    <img src="/assets/poster-douglass.jpg" alt="What to the Slave Is the Fourth of July? — Frederick Douglass loading screen" class="poster">
+<!-- ========== SECTION 3: THE SPEECH ========== -->
+<section class="speech" id="speech">
+  <div class="speech-quote" id="quote1" data-text="&ldquo;Fellow-citizens, pardon me, allow me to ask, why am I called upon to speak here today? What have I, or those I represent, to do with your national independence?&rdquo;"></div>
 
-    <div class="copy">
-      <div class="invocation">Frederick Douglass · July 5, 1852 · Rochester, NY</div>
-      <h1>What to the Slave Is the <em>Fourth of July?</em></h1>
-      <p class="byline">Delivered on July 5, 1852. Staged in VR on July 4, 2026 — at the exact moment the United States turns 250.</p>
-      <div class="body">
-        <p>
-          <strong>Douglass was invited to speak on July 4.</strong> He chose July 5. The refusal was the point.
-        </p>
-        <p>
-          174 years later, an immersive experience stages the speech as it was heard: the pageantry of Corinthian Hall, the rhetorical turn, the coffle passing by the celebration, the Constitution in flames, the Jubilee dawn. Seven scenes, built in WebXR, voiced with ElevenLabs. The speech is the spine. The room is the argument.
-        </p>
-        <p>
-          Launching at the 250th anniversary. Free. No login, no download, no app store. Enter from your browser.
-        </p>
+  <div class="speech-quote" id="quote2" data-text="&ldquo;This Fourth of July is yours, not mine. You may rejoice, I must mourn.&rdquo;"></div>
+
+  <div class="fire-text fire-text-sm" id="fire1" data-text="NOT MINE">NOT MINE</div>
+
+  <div class="speech-quote" id="quote3" data-text="&ldquo;At a time like this, scorching irony, not convincing argument, is needed. For it is not light that is needed, but fire.&rdquo;"></div>
+
+  <div class="fire-text fire-text-lg" id="fire2" data-text="FIRE">FIRE</div>
+</section>
+
+<!-- ========== SECTION 4: THE DOCUMENTS ========== -->
+<section class="documents" id="documents">
+
+  <!-- Declaration — burns on scroll -->
+  <div class="doc-row">
+    <div class="doc-image-wrap parallax-slow" id="doc-declaration">
+      <img src="/images/archive/declaration-stone-engraving.jpg" alt="Declaration of Independence, Stone Engraving, 1823 — National Archives">
+      <div class="burn-overlay" id="burn-overlay"></div>
+      <div class="doc-caption">"In CONGRESS, July 4, 1776"</div>
+    </div>
+  </div>
+
+  <!-- Slave Market broadside -->
+  <div class="doc-row">
+    <div class="doc-image-wrap parallax-slow" id="doc-slave-market">
+      <img src="/images/archive/slave-market-america.jpg" alt="The Land of the Free / The Home of the Oppressed, 1850s">
+      <div class="doc-caption">"THE LAND OF THE FREE &mdash; THE HOME OF THE OPPRESSED"</div>
+    </div>
+  </div>
+
+  <!-- Pamphlet cover -->
+  <div class="doc-row">
+    <div class="doc-image-wrap parallax-slow pamphlet-wrap" id="doc-pamphlet">
+      <img src="/images/archive/pamphlet-1852-cover.jpg" alt="ORATION. Delivered in Corinthian Hall, Rochester, July 5th, 1852">
+      <div class="doc-caption">"ORATION. Delivered in Corinthian Hall, Rochester."</div>
+    </div>
+  </div>
+
+  <!-- Newspaper — physical object -->
+  <div class="doc-row">
+    <div class="doc-image-wrap" id="doc-newspaper">
+      <div class="newspaper-wrap">
+        <img src="/images/archive/fd-paper-july9-1852-p1.jpg" alt="Frederick Douglass' Paper, July 9, 1852 — the speech printed four days later">
       </div>
-      <div class="cta-row">
-        <a href="https://radicalimagination.beehiiv.com/" target="_blank" rel="noopener" class="cta gold">Get the launch day alert →</a>
-        <a href="mailto:create@radicalimagination.xyz?subject=Douglass%20July%204%20—%20Early%20access%20request" class="cta crimson">Request early access →</a>
+      <div class="doc-caption">Frederick Douglass' Paper &mdash; July 9, 1852 &mdash; four days later</div>
+    </div>
+  </div>
+
+</section>
+
+<!-- ========== SECTION 5: THE NUMBERS ========== -->
+<section class="numbers" id="numbers">
+  <div class="numbers-grid">
+    <div class="number-card" id="nc-174">
+      <div class="number-big" id="counter-174">0</div>
+      <div class="number-label">years since the speech</div>
+      <div class="number-source">July 5, 1852 &mdash; July 4, 2026</div>
+    </div>
+    <div class="number-card" id="nc-250">
+      <div class="number-big" id="counter-250">0</div>
+      <div class="number-label">years since the Declaration<br>he called a sham</div>
+      <div class="number-source">Semiquincentennial &middot; July 4, 2026</div>
+    </div>
+    <div class="number-card" id="nc-160">
+      <div class="number-big">160+</div>
+      <div class="number-label">known photographs &mdash; the most<br>photographed American of the 19th century</div>
+      <div class="number-source">Stauffer, Trodd &amp; Bernier (2015)</div>
+      <!-- Aging sequence -->
+      <div class="aging-sequence" id="aging">
+        <div class="aging-portrait active" data-year="c. 1847">
+          <img src="/images/archive/cutouts/douglass-1847-face.png" alt="Frederick Douglass, c. 1847">
+        </div>
+        <div class="aging-portrait" data-year="c. 1852">
+          <img src="/images/archive/cutouts/douglass-face.png" alt="Frederick Douglass, c. 1852 (Miller daguerreotype)">
+        </div>
+        <div class="aging-portrait" data-year="c. 1855">
+          <img src="/images/archive/cutouts/douglass-1855-face.png" alt="Frederick Douglass, c. 1855">
+        </div>
+        <!-- 1862 and 1877 removed: LOC downloads were wrong people (white men from Brady-Handy collection).
+             Add back when correct Douglass portraits are manually downloaded and verified. -->
+        <div class="aging-year" id="aging-year">c. 1847</div>
       </div>
     </div>
-  </section>
+    <div class="number-card" id="nc-44">
+      <div class="number-big">44</div>
+      <div class="number-label">archival images in the experience</div>
+      <div class="number-source">Library of Congress, Met, NYPL, Smithsonian, NARA, AIC</div>
+    </div>
+    <div class="number-card" id="nc-6">
+      <div class="number-big">6</div>
+      <div class="number-label">institutional sources</div>
+    </div>
+    <div class="number-card" id="nc-1">
+      <div class="number-big">1</div>
+      <div class="number-label">founder, 0 funding</div>
+    </div>
+  </div>
+</section>
 
-  <footer>
-    <span class="footer-mark">
-      <img src="/assets/ri-logo.png" alt="Radical Imagination">
-      A Radical Imagination project
-    </span>
-    <a href="mailto:create@radicalimagination.xyz">create@radicalimagination.xyz</a>
-  </footer>
+<!-- ========== SECTION 6: THE COUNT ========== -->
+<section class="count" id="count">
+  <div class="count-dates" id="count-dates">July 5, 1852 &mdash; July 4, 2026</div>
+  <div class="count-number" id="count-big">174 years.</div>
+  <div class="count-line" id="count-line">The hour has not yet come.</div>
+</section>
 
-</div>
+<!-- ========== SECTION 7: ENTER ========== -->
+<section class="enter" id="enter">
+  <div class="enter-title">Launches July 4, 2026</div>
+  <a href="https://radicalimagination.beehiiv.com/" target="_blank" rel="noopener" class="enter-btn">RESERVE YOUR SEAT</a>
+  <div class="enter-meta">
+    Free &middot; VR headset or desktop browser &middot; 8&ndash;12 minutes &middot; Launch alert via Spark Dispatch
+  </div>
+  <div class="enter-sources">
+    Built from 44 archival images from the Library of Congress, Metropolitan Museum of Art, New York Public Library, Smithsonian Institution, National Archives, and Art Institute of Chicago.
+  </div>
+</section>
 
+<!-- ========== FOOTER ========== -->
+<footer class="footer">
+  <div class="ri-mark">A Radical Imagination Project</div>
+  <br>
+  <div class="footer-quote">
+    Frederick Douglass believed the photograph was the most democratic art form &mdash; it could not lie.
+  </div>
+  <br>
+  <a href="https://radicalimagination.xyz">radicalimagination.xyz</a> &middot;
+  Fiscally sponsored by <a href="https://fracturedatlas.org">Fractured Atlas</a> 501(c)(3)
+</footer>
+
+<script>
+(function() {
+  'use strict';
+
+  // ===== PARTICLES =====
+  const particleContainer = document.getElementById('particles');
+  for (let i = 0; i < 28; i++) {
+    const p = document.createElement('div');
+    p.className = 'particle';
+    p.style.left = (Math.random() * 100) + '%';
+    p.style.bottom = (-Math.random() * 20) + '%';
+    p.style.width = (1.5 + Math.random() * 2.5) + 'px';
+    p.style.height = p.style.width;
+    p.style.setProperty('--drift', (Math.random() * 40 - 20) + 'px');
+    p.style.animationDuration = (6 + Math.random() * 8) + 's';
+    p.style.animationDelay = (Math.random() * 10) + 's';
+    p.style.opacity = 0;
+    particleContainer.appendChild(p);
+  }
+
+  // ===== THRESHOLD: FACE EMERGENCE =====
+  const face = document.getElementById('face');
+  const thresholdText = document.getElementById('threshold-text');
+
+  setTimeout(function() {
+    face.classList.add('revealing');
+    thresholdText.classList.add('visible');
+  }, 2000);
+
+  // ===== INTERSECTION OBSERVER FOR SCROLL TRIGGERS =====
+  const revealObserver = new IntersectionObserver(function(entries) {
+    entries.forEach(function(entry) {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+      }
+    });
+  }, { threshold: 0.2 });
+
+  // Question lines — staggered
+  const q1 = document.getElementById('q1');
+  const q2 = document.getElementById('q2');
+  const qBg = document.getElementById('question-bg');
+
+  const questionObserver = new IntersectionObserver(function(entries) {
+    entries.forEach(function(entry) {
+      if (entry.isIntersecting) {
+        qBg.classList.add('visible');
+        setTimeout(function() { q1.classList.add('visible'); }, 300);
+        setTimeout(function() { q2.classList.add('visible'); }, 1800);
+        questionObserver.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.3 });
+  questionObserver.observe(document.getElementById('question'));
+
+  // ===== TYPING ANIMATION =====
+  function typeQuote(el) {
+    const raw = el.getAttribute('data-text');
+    if (!raw || el.dataset.typed === '1') return;
+    el.dataset.typed = '1';
+
+    // Decode HTML entities
+    const tmp = document.createElement('span');
+    tmp.innerHTML = raw;
+    const text = tmp.textContent;
+
+    el.textContent = '';
+    const chars = [];
+    for (let i = 0; i < text.length; i++) {
+      const span = document.createElement('span');
+      span.className = 'cursor-char';
+      span.textContent = text[i];
+      el.appendChild(span);
+      chars.push(span);
+    }
+
+    const interval = 1000 / 40; // 40 chars per second
+    let idx = 0;
+    function reveal() {
+      if (idx < chars.length) {
+        chars[idx].classList.add('typed');
+        idx++;
+        setTimeout(reveal, interval);
+      }
+    }
+    reveal();
+  }
+
+  // Observe each quote
+  document.querySelectorAll('.speech-quote').forEach(function(el) {
+    const qObs = new IntersectionObserver(function(entries) {
+      entries.forEach(function(entry) {
+        if (entry.isIntersecting) {
+          typeQuote(entry.target);
+          qObs.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.5 });
+    qObs.observe(el);
+  });
+
+  // Fire text reveal
+  document.querySelectorAll('.fire-text').forEach(function(el) {
+    revealObserver.observe(el);
+  });
+
+  // ===== DOCUMENT REVEALS =====
+  document.querySelectorAll('.doc-image-wrap').forEach(function(el) {
+    revealObserver.observe(el);
+  });
+
+  // Declaration burn effect
+  const burnOverlay = document.getElementById('burn-overlay');
+  const docDeclaration = document.getElementById('doc-declaration');
+  const burnObserver = new IntersectionObserver(function(entries) {
+    entries.forEach(function(entry) {
+      if (entry.isIntersecting) {
+        setTimeout(function() {
+          burnOverlay.classList.add('burning');
+        }, 800);
+        burnObserver.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.4 });
+  burnObserver.observe(docDeclaration);
+
+  // ===== COUNTER ANIMATION =====
+  function animateCounter(el, target, duration) {
+    if (el.dataset.counted === '1') return;
+    el.dataset.counted = '1';
+    const start = performance.now();
+
+    function step(now) {
+      const elapsed = now - start;
+      const progress = Math.min(elapsed / duration, 1);
+      // Ease out cubic — fast start, slow finish
+      const eased = 1 - Math.pow(1 - progress, 3);
+      const current = Math.round(eased * target);
+      el.textContent = current;
+      if (progress < 1) {
+        requestAnimationFrame(step);
+      } else {
+        el.textContent = target;
+      }
+    }
+    requestAnimationFrame(step);
+  }
+
+  const counter174 = document.getElementById('counter-174');
+  const counter250 = document.getElementById('counter-250');
+
+  const counterObserver = new IntersectionObserver(function(entries) {
+    entries.forEach(function(entry) {
+      if (entry.isIntersecting) {
+        const el = entry.target;
+        el.classList.add('visible');
+        if (el.id === 'nc-174') animateCounter(counter174, 174, 3000);
+        if (el.id === 'nc-250') animateCounter(counter250, 250, 3000);
+        counterObserver.unobserve(el);
+      }
+    });
+  }, { threshold: 0.3 });
+
+  document.querySelectorAll('.number-card').forEach(function(el) {
+    counterObserver.observe(el);
+  });
+
+  // ===== AGING SEQUENCE =====
+  const portraits = document.querySelectorAll('.aging-portrait');
+  const agingYear = document.getElementById('aging-year');
+  let currentPortrait = 0;
+
+  if (portraits.length > 1) {
+    setInterval(function() {
+      portraits[currentPortrait].classList.remove('active');
+      currentPortrait = (currentPortrait + 1) % portraits.length;
+      portraits[currentPortrait].classList.add('active');
+      agingYear.textContent = portraits[currentPortrait].getAttribute('data-year');
+    }, 3000);
+  }
+
+  // ===== THE COUNT SECTION =====
+  const countDates = document.getElementById('count-dates');
+  const countLine = document.getElementById('count-line');
+  const countObserver = new IntersectionObserver(function(entries) {
+    entries.forEach(function(entry) {
+      if (entry.isIntersecting) {
+        countDates.classList.add('visible');
+        countLine.classList.add('visible');
+        countObserver.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.3 });
+  countObserver.observe(document.getElementById('count'));
+
+  // ===== PARALLAX =====
+  const parallaxEls = document.querySelectorAll('.parallax-slow');
+  let ticking = false;
+
+  function updateParallax() {
+    const scrollY = window.scrollY;
+    parallaxEls.forEach(function(el) {
+      const rect = el.getBoundingClientRect();
+      const center = rect.top + rect.height / 2;
+      const viewCenter = window.innerHeight / 2;
+      const offset = (center - viewCenter) * 0.08;
+      el.style.transform = 'translateY(' + offset + 'px)';
+    });
+    ticking = false;
+  }
+
+  window.addEventListener('scroll', function() {
+    if (!ticking) {
+      requestAnimationFrame(updateParallax);
+      ticking = true;
+    }
+  }, { passive: true });
+
+  // ===== STICKY FACE ON SCROLL =====
+  const threshold = document.getElementById('threshold');
+  // ===== CURSOR-FOLLOW → DROP INTO PLACE =====
+  // Douglass's face follows the mouse cursor when you first arrive.
+  // After a few seconds, he drops into place at the podium. The cursor returns.
+  let cursorMode = true;
+  let dropped = false;
+
+  // Hide default cursor in threshold section
+  threshold.style.cursor = 'none';
+
+  function handleMouseMove(e) {
+    if (!cursorMode || dropped) return;
+    // Face follows the cursor with slight lag (lerp)
+    const x = e.clientX;
+    const y = e.clientY;
+    face.style.position = 'fixed';
+    face.style.left = x + 'px';
+    face.style.top = y + 'px';
+    face.style.transform = 'translate(-50%, -50%) scale(0.6)';
+    face.style.transition = 'none';
+    face.style.zIndex = '500';
+    face.style.pointerEvents = 'none';
+  }
+
+  function dropIntoPlace() {
+    if (dropped) return;
+    dropped = true;
+    cursorMode = false;
+
+    // Animate face from cursor position to center podium position
+    face.style.transition = 'all 1.2s cubic-bezier(0.16, 1, 0.3, 1)';
+    face.style.position = 'relative';
+    face.style.left = '';
+    face.style.top = '';
+    face.style.transform = '';
+    face.style.zIndex = '';
+    face.style.pointerEvents = '';
+
+    // Restore cursor
+    threshold.style.cursor = '';
+
+    // Remove mouse listener
+    document.removeEventListener('mousemove', handleMouseMove);
+  }
+
+  // Listen for mouse movement in the threshold
+  document.addEventListener('mousemove', handleMouseMove);
+
+  // Drop into place after 4 seconds OR on first scroll OR on click
+  setTimeout(dropIntoPlace, 4000);
+  window.addEventListener('scroll', function onFirstScroll() {
+    dropIntoPlace();
+    window.removeEventListener('scroll', onFirstScroll);
+  }, { once: true });
+  threshold.addEventListener('click', dropIntoPlace);
+
+  // ===== STICKY FACE ON SCROLL =====
+  let faceSticky = false;
+
+  function handleFaceSticky() {
+    if (cursorMode) return; // don't interfere with cursor mode
+    const rect = threshold.getBoundingClientRect();
+    if (rect.bottom < window.innerHeight * 0.5 && !faceSticky) {
+      face.style.position = 'fixed';
+      face.style.top = '20px';
+      face.style.left = '50%';
+      face.style.transform = 'translateX(-50%) scale(0.3)';
+      face.style.opacity = '0.15';
+      face.style.zIndex = '100';
+      face.style.transition = 'transform 0.8s ease, opacity 0.8s ease';
+      face.style.pointerEvents = 'none';
+      faceSticky = true;
+    } else if (rect.bottom >= window.innerHeight * 0.5 && faceSticky) {
+      face.style.position = '';
+      face.style.top = '';
+      face.style.left = '';
+      face.style.transform = '';
+      face.style.opacity = '';
+      face.style.zIndex = '';
+      face.style.transition = '';
+      face.style.pointerEvents = '';
+      faceSticky = false;
+    }
+  }
+
+  window.addEventListener('scroll', function() {
+    requestAnimationFrame(handleFaceSticky);
+  }, { passive: true });
+
+})();
+</script>
 </body>
 </html>
